@@ -1,0 +1,64 @@
+version: '3.8'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: marketplace-connector-app
+    container_name: connector_app
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html
+    ports:
+      - "3001:3001"
+    depends_on:
+      - mysql
+      - redis
+      - mock-api
+    networks:
+      - connector-net
+
+  mysql:
+    image: mysql:8.0
+    container_name: connector_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: connector_db
+      MYSQL_USER: connect_user
+      MYSQL_PASSWORD: connect_password
+    volumes:
+      - mysql-data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - connector-net
+
+  redis:
+    image: redis:7
+    container_name: connector_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      - connector-net
+
+  mock-api:
+    image: mockoon/cli:latest
+    container_name: connector_mock_api
+    restart: unless-stopped
+    volumes:
+      - ./mocketplace.json:/data/mocketplace.json:ro
+    command: ["-d", "/data/mocketplace.json", "-p", "3000"]
+    ports:
+      - "3000:3000"
+    networks:
+      - connector-net
+
+networks:
+  connector-net:
+    driver: bridge
+
+volumes:
+  mysql-data:

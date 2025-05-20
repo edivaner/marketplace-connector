@@ -7,6 +7,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "illuminate/queue": "*",
         "laravel/framework": "^11.31",
         "laravel/tinker": "^2.9"
     },
@@ -23,7 +24,8 @@
         "psr-4": {
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
-            "Database\\Seeders\\": "database/seeders/"
+            "Database\\Seeders\\": "database/seeders/",
+            "App\\Infrastructure\\Persistence\\Models\\": "app/Infrastructure/Persistence/Models/"
         }
     },
     "autoload-dev": {
