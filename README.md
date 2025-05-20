@@ -1,25 +1,62 @@
-## Motivo do projeto
+## O que é este Projeto
+Este projeto importa ofertas de um mock (Mockoon) e as persiste em banco, usando Laravel 11, Docker, Redis, filas e Design Patterns (State, Repository, Service).
 
+## Baixar o projeto
+```bash
+git clone [adicionar url]
+
+cd marketplace-connector
+```
+
+
+## Configuração Inicial do Projeto - Para o Ambiente Local
+### SO Ubuntu:
+```bash
+cp .env.example .env
+```
+### SO Windows (PowerShell):
+```powershell
+Copy-Item .env.example .env
+```
 
 ## Instruções para iniciar o projeto.
-    1. Para iniciar todos os serviços: 
-``` docker-compose up -d --build ```
+Para iniciar todos os serviços: 
 
-    2. Baixar as dependências do projeto dentro do container app (Dockerfile faz isso)
-``` docker exec -it connector_app bash ```
- e 
-``` composer install ``` 
+    1. Subir os containers docker (serviços Laravel, MySql, Redis, Mockoon e 3 filas)
+```bash
+ docker-compose up -d --build 
+ ```
 
-    3. Copiar o .env  e gerar uma chave 
-``` cp .env.example .env ```
-    e  depois  
-``` php artisan key:generate ``` 
+    2. Instalando as dependências do PHP com o composer
+```bash
+docker exec -it connector_app composer install
+```  
 
-    4. Rodar os migrates
-``` php artisan migrate ```
+    3. Gerar chave 
+```bash 
+ docker exec -it connector_app php artisan key:generate --ansi 
+ ```
 
-    5. Sair de dentro do container
-``` exit ```
+    4. Rodar as migrations
+```bash
+ docker exec -it connector_app php artisan migrate 
+ ```
 
-    6. acessar localhost
-``` http://localhost:3001/ ```
+## Informações dobre as filas
+### Detalhei 3 filas e todas são iniciados junto com o docker-compose
+    - offers (offers-worker)
+    - offer_details (details-worker)
+    - default (default-worker)
+
+
+## Executando a importação de offers
+### Este é o endpoint 
+```
+GET http://localhost:3001/api/import/offers
+```
+
+ou
+
+```bash
+curl -X GET http://localhost:3001/api/import/offers
+```

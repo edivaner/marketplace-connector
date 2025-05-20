@@ -19,6 +19,56 @@ services:
     networks:
       - connector-net
 
+  # fila de páginas de ofertas
+  offers-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: connector_offers_worker
+    restart: unless-stopped
+    depends_on:
+      - app
+      - redis
+    networks:
+      - connector-net
+    command: >
+      php artisan queue:work redis
+      --queue=offers
+      --sleep=3
+      --tries=3
+
+  # fila de offers details
+  details-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: connector_details_worker
+    restart: unless-stopped
+    depends_on:
+      - app
+      - redis
+    networks:
+      - connector-net
+    command: >
+      php artisan queue:work redis
+      --queue=offer_details
+      --sleep=3
+      --tries=3
+
+  # fila padrão
+  default-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: connector_default_worker
+    restart: unless-stopped
+    depends_on:
+      - app
+      - redis
+    networks:
+      - connector-net
+    command: php artisan queue:work redis --sleep=3 --tries=3
+
   mysql:
     image: mysql:8.0
     container_name: connector_mysql
