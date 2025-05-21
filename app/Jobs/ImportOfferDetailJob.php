@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Domain\Interfaces\OfferImportServiceInterface;
+use App\Domain\Interfaces\OfferRepositoryInterface;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Foundation\Queue\Queueable;
@@ -33,8 +34,31 @@ class ImportOfferDetailJob implements ShouldQueue
     /**
      * Execute the job.
      */
-    public function handle(OfferImportServiceInterface $service): void {
+    public function handle(OfferImportServiceInterface $service, OfferRepositoryInterface $repository): void {
+        Log::info("[{$this->importId}] Iniciando importação dos detalhes da oferta {$this->offerId}");
 
+        if ($repository->exists($this->offerId)) {
+            Log::info("[{$this->importId}] Oferta {$this->offerId} já importada. Ignorando importação dos detalhes.");
+            return;
+        }
+
+        // pegar os detalhes da offer
+        $detail = $service->getOfferDetail($this->offerId);
+        $price = $service->getOfferPrice($this->offerId);
+        $images = $service->getOfferImages($this->offerId);
+       
+        // salvar no banco
+        $repository->save($detail, $price, $images);
+        Log::info("[{$this->importId}] oferta {$this->offerId}, foi importada com sucesso no banco de dados");
+
+        // salvar no HUB (mock POST)
+        $service->sendToHub([
+            'title'       => $detail->title(),
+            'description' => $detail->description(),
+            'status'      => $detail->status(),
+            'stock'       => $detail->stock(),
+        ]);
+        Log::info("[{$this->importId}] Oferta {$this->offerId} importada com sucesso");
     }
     
     public function failed(\Throwable $exception): void {

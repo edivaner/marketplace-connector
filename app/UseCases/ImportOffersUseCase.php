@@ -1,8 +1,9 @@
 <?php
 namespace App\UseCases;
 
-use App\Jobs\ImportOffersPageJob;
+use App\Domain\State\ImportContext;
 use App\UseCases\Contracts\ImportOffersUseCaseInterface;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class ImportOffersUseCase implements ImportOffersUseCaseInterface
@@ -11,9 +12,11 @@ class ImportOffersUseCase implements ImportOffersUseCaseInterface
     {
         $importId = Str::uuid()->toString();
 
-        // Dispara o job para importar as ofertas
-        ImportOffersPageJob::dispatch($importId, 1)->onQueue('offers')->delay(now());
-
+        // Agendar a execução de um job para importar os anúncios
+        $context = new ImportContext($importId);
+        Log::info("Iniciando importação dos anúncios com ID: $importId");
+        $context->proceed(1);
+        
         return $importId;
     }
 }

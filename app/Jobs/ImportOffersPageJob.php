@@ -2,6 +2,8 @@
 
 namespace App\Jobs;
 
+use App\Domain\Interfaces\OfferImportServiceInterface;
+use App\Domain\Interfaces\OfferRepositoryInterface;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Foundation\Queue\Queueable;
@@ -10,7 +12,6 @@ use Illuminate\Queue\Middleware\ThrottlesExceptions;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use App\Jobs\ImportOfferDetailJob;
-use App\Services\OfferImportService;
 
 class ImportOffersPageJob implements ShouldQueue
 {
@@ -39,9 +40,21 @@ class ImportOffersPageJob implements ShouldQueue
     /**
      * Execute the job.
      */
-    public function handle(OfferImportService $service): void
-    {
+    public function handle(OfferImportServiceInterface $service, OfferRepositoryInterface $repository): void {
+        Log::info("[{$this->importId}] Iniciando importação da página {$this->page}");
 
+        $response = $service->getPage($this->page);
+
+        foreach($response->offers() as $offerId){
+
+            if ($repository->exists($offerId)) {
+                Log::info("[{$this->importId}] oferta {$offerId} já importada.");
+                continue;
+            }
+
+            ImportOfferDetailJob::dispatch($this->importId, $offerId)->onQueue('offer_details');
+            Log::info("[{$this->importId}] Foi inicializado a importaçao dos detalhes da oferta: {$offerId}");
+        }
     }
 
     public function failed(\Throwable $exception){

@@ -1,9 +1,9 @@
-## O que é este Projeto
-Este projeto importa ofertas de um mock (Mockoon) e as persiste em banco, usando Laravel 11, Docker, Redis, filas e Design Patterns (State, Repository, Service).
+## O que é este projeto
+Este projeto importa informações de produto de um mock (com Mockoon) instanciado no docker e persiste as informações no banco de dados, e manda essas informações para um HUB, usando Laravel 11, Docker, Redis, filas e Design Patterns (State, Repository, Service).
 
 ## Baixar o projeto
 ```bash
-git clone [adicionar url]
+git clone https://github.com/edivaner/marketplace-connector.git
 
 cd marketplace-connector
 ```
@@ -22,32 +22,42 @@ Copy-Item .env.example .env
 ## Instruções para iniciar o projeto.
 Para iniciar todos os serviços: 
 
-    1. Subir os containers docker (serviços Laravel, MySql, Redis, Mockoon e 3 filas)
+1. Subir os containers docker (serviços Laravel, MySql, Redis, Mockoon e 3 filas)
 ```bash
  docker-compose up -d --build 
  ```
 
-    2. Instalando as dependências do PHP com o composer
+2. Instalando as dependências do PHP com o composer
 ```bash
 docker exec -it connector_app composer install
 ```  
 
-    3. Gerar chave 
+3. Gerar chave 
 ```bash 
  docker exec -it connector_app php artisan key:generate --ansi 
  ```
 
-    4. Rodar as migrations
+4. Rodar as migrations
 ```bash
  docker exec -it connector_app php artisan migrate 
  ```
 
-## Informações dobre as filas
-### Detalhei 3 filas e todas são iniciados junto com o docker-compose
+## Informações sobre as filas
+### neste projeto existe 3 filas e todas são iniciados junto com o docker-compose
     - offers (offers-worker)
     - offer_details (details-worker)
     - default (default-worker)
 
+#### Para ver os jobs sendo executado
+Utiliza os comandos em terminais diferentes.
+``` docker-compose logs -f offers-worker```
+e
+``` docker-compose logs -f detail-worker```
+
+#### Para ver os logs da aplicação (Logs criados durante a execução)
+```bash
+docker exec -it connector_app tail -f storage/logs/laravel.log
+```
 
 ## Executando a importação de offers
 ### Este é o endpoint 
@@ -55,8 +65,12 @@ docker exec -it connector_app composer install
 GET http://localhost:3001/api/import/offers
 ```
 
-ou
+### Para executar no terminal
 
 ```bash
 curl -X GET http://localhost:3001/api/import/offers
+```
+ou 
+``` 
+curl -i http://localhost:3001/api/import/offers
 ```

@@ -1,4 +1,5 @@
 version: '3.8'
+
 services:
   app:
     build:
@@ -26,6 +27,9 @@ services:
       dockerfile: Dockerfile
     container_name: connector_offers_worker
     restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html
     depends_on:
       - app
       - redis
@@ -37,13 +41,16 @@ services:
       --sleep=3
       --tries=3
 
-  # fila de offers details
+  # fila de detalhes de ofertas
   details-worker:
     build:
       context: .
       dockerfile: Dockerfile
     container_name: connector_details_worker
     restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html
     depends_on:
       - app
       - redis
@@ -62,12 +69,18 @@ services:
       dockerfile: Dockerfile
     container_name: connector_default_worker
     restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html
     depends_on:
       - app
       - redis
     networks:
       - connector-net
-    command: php artisan queue:work redis --sleep=3 --tries=3
+    command: >
+      php artisan queue:work redis
+      --sleep=3
+      --tries=3
 
   mysql:
     image: mysql:8.0
