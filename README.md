@@ -35,22 +35,22 @@ Para iniciar todos os serviços:
 
 1. Instalando as dependências do PHP com o composer
 ```bash
- composer install
+composer install
 ```  
 
 2. Subir os containers docker (serviços Laravel, MySql, Redis, Mockoon e 3 filas)
 ```bash
- docker-compose up -d --build 
+docker-compose up -d --build 
  ```
 
 3. Gerar chave 
 ```bash 
- docker exec -it connector_app php artisan key:generate
+docker exec -it connector_app php artisan key:generate
  ```
 
 4. Rodar as migrations
 ```bash
- docker exec -it connector_app php artisan migrate 
+docker exec -it connector_app php artisan migrate 
  ```
 
 ## Executando a importação de offers
