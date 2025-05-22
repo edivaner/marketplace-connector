@@ -10,7 +10,7 @@ cd marketplace-connector
 
 
 ## Configuração Inicial do Projeto - Para o Ambiente Local
-### SO Ubuntu:
+### SO Ubuntu / terminal bash:
 ```bash
 cp .env.example .env
 ```
@@ -33,15 +33,15 @@ DB_PASSWORD=connect_password
 ## Instruções para iniciar o projeto.
 Para iniciar todos os serviços: 
 
-1. Subir os containers docker (serviços Laravel, MySql, Redis, Mockoon e 3 filas)
+1. Instalando as dependências do PHP com o composer
+```bash
+ composer install
+```  
+
+2. Subir os containers docker (serviços Laravel, MySql, Redis, Mockoon e 3 filas)
 ```bash
  docker-compose up -d --build 
  ```
-
-2. Instalando as dependências do PHP com o composer
-```bash
-docker exec -it connector_app composer install
-```  
 
 3. Gerar chave 
 ```bash 
@@ -52,6 +52,22 @@ docker exec -it connector_app composer install
 ```bash
  docker exec -it connector_app php artisan migrate 
  ```
+
+## Executando a importação de offers
+### Este é o endpoint 
+```
+GET http://localhost:3001/api/import/offers
+```
+
+### Para executar no terminal
+
+```bash
+curl -X GET http://localhost:3001/api/import/offers
+```
+ou 
+``` 
+curl -i http://localhost:3001/api/import/offers
+```
 
 ## Informações sobre as filas
 ### neste projeto existe 3 filas e todas são iniciados junto com o docker-compose
@@ -68,20 +84,4 @@ e
 #### Para ver os logs da aplicação (Logs criados durante a execução)
 ```bash
 docker exec -it connector_app tail -f storage/logs/laravel.log
-```
-
-## Executando a importação de offers
-### Este é o endpoint 
-```
-GET http://localhost:3001/api/import/offers
-```
-
-### Para executar no terminal
-
-```bash
-curl -X GET http://localhost:3001/api/import/offers
-```
-ou 
-``` 
-curl -i http://localhost:3001/api/import/offers
 ```
