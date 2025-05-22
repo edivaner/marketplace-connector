@@ -11,9 +11,10 @@ use Illuminate\Support\Facades\Log;
 
 class EloquentOfferRepository implements OfferRepositoryInterface {
 
+    /**
+     * @inheritDoc
+     */
     public function save(OfferDetail $detail, float $price, array $images): void {
-        Log::info("Persistindo oferta {$detail->id()} no banco de dados.");
-
         if ($this->exists($detail->id())) {
             Log::info("Repositório: oferta {$detail->id()} já existe. Pulando persistência.");
             return;
@@ -38,10 +39,12 @@ class EloquentOfferRepository implements OfferRepositoryInterface {
                     'url'      => $url,
                 ]);
             }
-            Log::info("Oferta e imagens persistidas com sucesso. Oferta: {$detail->id()}");
         });
     }
 
+    /**
+     * @inheritDoc
+     */
     public function exists(string $offerId): bool{
         return OfferModel::where('marketplace_order_id', $offerId)->exists();
     }

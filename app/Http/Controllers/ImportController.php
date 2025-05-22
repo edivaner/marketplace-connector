@@ -7,11 +7,18 @@ use Illuminate\Http\JsonResponse;
 
 class ImportController extends Controller{
 
-    private ImportOffersUseCaseInterface $importOffersUseCase;
-    public function __construct(ImportOffersUseCaseInterface $importOffersUseCase){
-        $this->importOffersUseCase = $importOffersUseCase;
-    }
+    /**
+     * ImportController constructor.
+     *
+     * @param ImportOffersUseCaseInterface $importOffersUseCase
+     */
+    public function __construct(private ImportOffersUseCaseInterface $importOffersUseCase){}
 
+    /**
+     * Import offers from the source.
+     *
+     * @return JsonResponse
+     */
     public function importOffers(): JsonResponse {
         $returnOffers = $this->importOffersUseCase->execute();
 

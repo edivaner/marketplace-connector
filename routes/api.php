@@ -20,16 +20,3 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::get('import/offers', [ImportController::class, 'importOffers']);
-
-
-
-Route::get('/hello', function () {
-    return response()->json(['message' => 'Hello from API! Bora pra tray!!']);
-});
-
-// Route::get('/import/offers', function () {
-//     return response()->json(['message' => 'Hello from API! Bora pra tray!!']);
-// });
-
-// verificar se o post não se encaixe melhor que o get
-// Route::post('import/offers', [ImportController::class, 'importOffers']);

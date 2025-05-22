@@ -34,7 +34,7 @@ docker exec -it connector_app composer install
 
 3. Gerar chave 
 ```bash 
- docker exec -it connector_app php artisan key:generate --ansi 
+ docker exec -it connector_app php artisan key:generate
  ```
 
 4. Rodar as migrations
