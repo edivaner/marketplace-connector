@@ -19,6 +19,17 @@ cp .env.example .env
 Copy-Item .env.example .env
 ```
 
+## Informações sobre o banco de dados MYSQL
+#### usar essar informações para criar o database. (Também disponiveis no .env)
+```env
+DB_CONNECTION=mysql
+DB_HOST=mysql
+DB_PORT=3306
+DB_DATABASE=connector_db
+DB_USERNAME=connect_user
+DB_PASSWORD=connect_password
+```
+
 ## Instruções para iniciar o projeto.
 Para iniciar todos os serviços: 
 
